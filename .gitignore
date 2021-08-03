@@ -17,3 +17,14 @@
 /depcomp
 /install-sh
 /missing
+src/btrbkgui
+src/infowin.o
+src/installdir.o
+src/logfile.o
+src/logmsg.o
+src/logwatch.o
+src/main.o
+src/Makefile
+src/Makefile.in
+src/stateicon.o
+src/.deps
