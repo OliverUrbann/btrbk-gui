@@ -40,3 +40,7 @@ sudo make install
 ```
 
 Note that the executable will not work without installation as it searches for icons etc. in the installation destination.
+
+## Usage
+
+A log file written by btrbk is required so that this tool can read it. I assume the log file is `/var/log/btrbk.log`. Probably your btrbk must be configured to write this log here. You may give another path as a parameter like `btrbk-gui /var/log/other-btrbk.log`.
