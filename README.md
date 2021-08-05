@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a simple GUI for btrbk showing an icon (to be precise: an app-indicator) that indicate the state of the backup:
+This is a simple GUI for btrbk showing an icon (to be precise: an app-indicator) that indicates the state of the backup:
 
 * successful:  ![successful](/doc/backup-ok.jpg)
 * running:     ![successful](/doc/backup-running.jpg)
@@ -15,7 +15,7 @@ backup and the log file of btrbk. It is written for Gnome using GTK and I've tes
 
 ## Motivation
 
-My intention for writing this small tool is my experience with Time Machine for macOS. Btrfs and btrbk are great for backup ups but I missed a simple icon giving me some feedback about the state. I'm not sure if I will extend this tool in future with a lot of other features as this is all I want. 
+My intention for writing this small tool is my experience with Time Machine for macOS. Btrfs and btrbk are great for backups but I missed a simple icon giving me some feedback about the state. I'm not sure if I will extend this tool in future with a lot of other features as this is more or less all I want. 
 
 Furthermore, I prefer old-school autotools and C++ so I use this for this tool.
 
@@ -42,3 +42,7 @@ sudo make install
 ```
 
 Note that the executable will not work without installation as it searches for icons etc. in the installation destination.
+
+## Usage
+
+A log file written by btrbk is required so that this tool can read it. I assume the log file is `/var/log/btrbk.log`. Probably your btrbk must be configured to write this log here. You may give another path as a parameter like `btrbk-gui /var/log/other-btrbk.log`.
