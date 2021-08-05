@@ -28,7 +28,6 @@ const std::string LogMsg::getMsg() const
 
 const std::string LogMsg::getTime() const
 {
-    
     char buffer[80];
     strftime(buffer, 80, "%c", &t);
     return buffer;

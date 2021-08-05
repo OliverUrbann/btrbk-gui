@@ -1,6 +1,7 @@
 #include "logwatch.h"
+#include "tools.h"
 #include <sys/inotify.h>
-
+#include <chrono>
 
 #define EVENT_SIZE  ( sizeof (struct inotify_event) )
 #define BUF_LEN     ( 1024 * (EVENT_SIZE + 16 ) )
@@ -17,12 +18,19 @@ LogWatch::LogWatch(std::string logfilePath, GMainContext *context) :
 
 std::thread LogWatch::runWatchThread()
 {
-    return std::thread(&LogWatch::watch_logfile, this);
+  return std::thread(&LogWatch::watch_logfile, this);
 }
 
-gboolean LogWatch::logfileChanged(gpointer user_data)
+void LogWatch::checkProcState()
+{
+  int pid = getProcIdByName(btrbkPath);
+  procRunning = pid != -1;
+}
+
+gboolean LogWatch::stateChanged(gpointer user_data)
 {
   LogWatch *lw = (LogWatch *)user_data;
+  lw->checkProcState();
   lw->l.parse();
   lw->updateIcon();
   lw->updateLogView();
@@ -42,7 +50,10 @@ void LogWatch::updateIcon()
       icon.updateIcon(StateIcon::IconType::err);
       break;
     case LogMsg::running:
-      icon.updateIcon(StateIcon::IconType::running);
+      if (procRunning)
+        icon.updateIcon(StateIcon::IconType::running);
+      else
+        icon.updateIcon(StateIcon::IconType::err);
       break;
     default:
       icon.updateIcon(StateIcon::IconType::def);
@@ -65,7 +76,6 @@ void LogWatch::updateStatus()
         if (i->interpretMsg() == LogMsg::finished_success)
         {
           statusMsg = i->getTime();
-          break;
         }
       }
       break;
@@ -95,9 +105,20 @@ void LogWatch::notifyMainLoop()
 {
   GSource *source;
   source = g_idle_source_new();
-  g_source_set_callback(source, logfileChanged, this, NULL);
+  g_source_set_callback(source, stateChanged, this, NULL);
   g_source_attach(source, context);
   g_source_unref(source);
+}
+
+void LogWatch::waitForProc()
+{
+  // Busy wait as inotify doesn't work on procfs and
+  // wait only works for child procs.
+  int pid = 0;  
+  std::chrono::seconds timespan(10);
+  while (getProcIdByName(btrbkPath) != -1)
+    std::this_thread::sleep_for(timespan);
+  notifyMainLoop();
 }
 
 void LogWatch::watch_logfile()
@@ -116,6 +137,7 @@ void LogWatch::watch_logfile()
 
   Logfile l = Logfile(logfilePath);
   notifyMainLoop();
+  waitForProc();
 
   fd = inotify_init();
 
@@ -168,7 +190,10 @@ void LogWatch::watch_logfile()
     while ( i < length ) {
       inotify_event* event = (inotify_event*) &buffer[ i ];
       if ( event->mask & IN_MODIFY )
+      {
         notifyMainLoop();
+        waitForProc();
+      }
       i += EVENT_SIZE + event->len;
     }
   }

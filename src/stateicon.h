@@ -4,7 +4,7 @@
 #include <string>
 #include "infowin.h"
 #include <gtkmm.h>
-#include "installdir.h"
+#include "tools.h"
 
 class StateIcon
 {

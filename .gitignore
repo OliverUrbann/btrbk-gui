@@ -1,5 +1,6 @@
 /.deps
 /.vscode
+/src/.deps
 /Makefile
 /Makefile.in
 /Makefile.manual
@@ -28,3 +29,4 @@ src/Makefile
 src/Makefile.in
 src/stateicon.o
 src/.deps
+src/tools.o

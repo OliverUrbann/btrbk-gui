@@ -9,16 +9,20 @@
 class LogWatch
 {
     std::string logfilePath;
+    std::string btrbkPath = "/usr/sbin/btrbk";
     void notifyMainLoop();
     void watch_logfile();
     StateIcon icon;
     Logfile l;
     GMainContext *context;
+    bool procRunning = false;
 
     void updateIcon();
-    static gboolean logfileChanged(gpointer user_data);
+    static gboolean stateChanged(gpointer user_data);
     void updateLogView();
     void updateStatus();
+    void checkProcState();
+    void waitForProc();
 
 
 public:

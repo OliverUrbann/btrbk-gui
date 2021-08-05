@@ -1,5 +1,5 @@
 #include "infowin.h"
-#include "installdir.h"
+#include "tools.h"
 
 // https://riptutorial.com/gtk3/example/19806/-cplusplus--using-gtk--builder-in-gtkmm
 InfoWin::InfoWin() : 

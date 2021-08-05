@@ -33,7 +33,9 @@ Now generate files and compile:
 aclocal && autoconf && automake --add-missing --foreign && ./configure && make
 ```
 
-And install with:
+For debugging you may want to use `./configure 'CXXFLAGS=-O0 -g'`.
+
+Now install with:
 
 ```
 sudo make install
