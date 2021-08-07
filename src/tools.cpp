@@ -7,6 +7,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <stdio.h>
+#include <list>
 
 #include "tools.h"
 
@@ -16,9 +17,14 @@ std::string getInstallDir()
     return (std::string)DATA_DIR;
 }
 
-int getProcIdByName(std::string procName)
+int getBtrbkPID()
 {
     int pid = -1;
+
+    std::list<std::string> idStrings = {
+        "perl",
+        "btrbk"
+    };
 
     // Open the /proc directory
     DIR *dp = opendir("/proc");
@@ -39,10 +45,18 @@ int getProcIdByName(std::string procName)
                 std::getline(cmdFile, cmdLine);
                 if (!cmdLine.empty())
                 {
-                    // Keep first cmdline item which contains the program path
-                    size_t pos = cmdLine.find(procName);
-                    if (pos != std::string::npos)
+                    bool found = true;
+                    for (auto s: idStrings)
+                    {
+                        size_t pos = cmdLine.find(s);
+                        if (pos == std::string::npos)
+                            found = false;
+                    }
+                    if (found)
+                    {
                         pid = id;
+                        break;
+                    }
                 }
             }
         }

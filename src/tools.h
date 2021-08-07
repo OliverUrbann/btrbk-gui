@@ -7,4 +7,4 @@
 #define DATA_DIR STR(DATADIR)
 
 std::string getInstallDir();
-int getProcIdByName(std::string procName);
+int getBtrbkPID();

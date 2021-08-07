@@ -23,7 +23,7 @@ std::thread LogWatch::runWatchThread()
 
 void LogWatch::checkProcState()
 {
-  int pid = getProcIdByName(btrbkPath);
+  int pid = getBtrbkPID();
   procRunning = pid != -1;
 }
 
@@ -116,7 +116,7 @@ void LogWatch::waitForProc()
   // wait only works for child procs.
   int pid = 0;  
   std::chrono::seconds timespan(10);
-  while (getProcIdByName(btrbkPath) != -1)
+  while (getBtrbkPID() != -1)
     std::this_thread::sleep_for(timespan);
   notifyMainLoop();
 }
