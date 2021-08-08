@@ -1,4 +1,4 @@
-#include "logwatch.h"
+#include "watchthreads.h"
 #include "tools.h"
 #include <sys/inotify.h>
 #include <chrono>

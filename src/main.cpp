@@ -1,4 +1,4 @@
-#include "logwatch.h"
+#include "watchthreads.h"
 #include <string>
 #include <gtk/gtk.h>
 

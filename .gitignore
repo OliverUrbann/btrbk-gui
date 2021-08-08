@@ -30,3 +30,4 @@ src/Makefile.in
 src/stateicon.o
 src/.deps
 src/tools.o
+src/watchthreads.o
