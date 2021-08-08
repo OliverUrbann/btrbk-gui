@@ -16,9 +16,10 @@ LogWatch::LogWatch(std::string logfilePath, GMainContext *context) :
 
 }
 
-std::thread LogWatch::runWatchThread()
+void LogWatch::runWatchThread()
 {
-  return std::thread(&LogWatch::watch_logfile, this);
+  fileThread = std::thread(&LogWatch::watch_logfile, this);
+  procThread = std::thread(&LogWatch::watch_proc, this);  
 }
 
 void LogWatch::checkProcState()
@@ -104,13 +105,20 @@ void LogWatch::updateLogView()
 void LogWatch::notifyMainLoop()
 {
   GSource *source;
+  last_mod = getFileModTime(logfilePath);
   source = g_idle_source_new();
   g_source_set_callback(source, stateChanged, this, NULL);
   g_source_attach(source, context);
   g_source_unref(source);
 }
 
-void LogWatch::waitForProc()
+void LogWatch::join()
+{
+  procThread.join();
+  fileThread.join();
+}
+
+void LogWatch::watch_proc()
 {
   // Busy wait as inotify doesn't work on procfs and
   // wait only works for child procs.
@@ -137,7 +145,6 @@ void LogWatch::watch_logfile()
 
   Logfile l = Logfile(logfilePath);
   notifyMainLoop();
-  waitForProc();
 
   fd = inotify_init();
 
@@ -190,10 +197,8 @@ void LogWatch::watch_logfile()
     while ( i < length ) {
       inotify_event* event = (inotify_event*) &buffer[ i ];
       if ( event->mask & IN_MODIFY )
-      {
         notifyMainLoop();
-        waitForProc();
-      }
+      
       i += EVENT_SIZE + event->len;
     }
   }

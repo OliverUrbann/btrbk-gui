@@ -8,3 +8,4 @@
 
 std::string getInstallDir();
 int getBtrbkPID();
+long getFileModTime(std::string path);

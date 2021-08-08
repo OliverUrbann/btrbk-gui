@@ -16,16 +16,18 @@ class LogWatch
     Logfile l;
     GMainContext *context;
     bool procRunning = false;
+    long last_mod = 0;
+    std::thread fileThread, procThread;
 
     void updateIcon();
     static gboolean stateChanged(gpointer user_data);
     void updateLogView();
     void updateStatus();
     void checkProcState();
-    void waitForProc();
-
+    void watch_proc();
 
 public:
     LogWatch(std::string, GMainContext*);
-    std::thread runWatchThread();
+    void runWatchThread();
+    void join();
 };

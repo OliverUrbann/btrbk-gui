@@ -1,4 +1,5 @@
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include <errno.h>
 #include <vector>
@@ -65,4 +66,11 @@ int getBtrbkPID()
     closedir(dp);
 
     return pid;
+}
+
+long getFileModTime(std::string path)
+{
+  struct stat s;
+  stat(path.c_str(), &s);
+  return s.st_mtim.tv_sec;
 }

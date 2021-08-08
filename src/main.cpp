@@ -23,10 +23,10 @@ int main (int argc, char **argv)
 
   GMainContext *context = g_main_context_default();
   LogWatch lw(logfilePath, context);
-  std::thread t = lw.runWatchThread();
+  lw.runWatchThread();
   app->hold();
   int ret = app->run();
-  t.join();
+  lw.join();
 
   return ret;
 }
