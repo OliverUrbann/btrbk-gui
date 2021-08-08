@@ -8,7 +8,7 @@
 
 // All following functions run in main (GUI) thread
 
-LogWatch::LogWatch(std::string logfilePath, GMainContext *context) :
+WatchThreads::WatchThreads(std::string logfilePath, GMainContext *context) :
     logfilePath(logfilePath),
     l(logfilePath),
     context(context)
@@ -16,21 +16,21 @@ LogWatch::LogWatch(std::string logfilePath, GMainContext *context) :
 
 }
 
-void LogWatch::runWatchThread()
+void WatchThreads::runWatchThreads()
 {
-  fileThread = std::thread(&LogWatch::watch_logfile, this);
-  procThread = std::thread(&LogWatch::watch_proc, this);  
+  fileThread = std::thread(&WatchThreads::watch_logfile, this);
+  procThread = std::thread(&WatchThreads::watch_proc, this);  
 }
 
-void LogWatch::checkProcState()
+void WatchThreads::checkProcState()
 {
   int pid = getBtrbkPID();
   procRunning = pid != -1;
 }
 
-gboolean LogWatch::stateChanged(gpointer user_data)
+gboolean WatchThreads::stateChanged(gpointer user_data)
 {
-  LogWatch *lw = (LogWatch *)user_data;
+  WatchThreads *lw = (WatchThreads *)user_data;
   lw->checkProcState();
   lw->l.parse();
   lw->updateIcon();
@@ -39,7 +39,7 @@ gboolean LogWatch::stateChanged(gpointer user_data)
   return G_SOURCE_REMOVE;
 }
 
-void LogWatch::updateIcon()
+void WatchThreads::updateIcon()
 {
   
   switch(l.getLatestMsg().interpretMsg())
@@ -62,7 +62,7 @@ void LogWatch::updateIcon()
   }
 }
 
-void LogWatch::updateStatus()
+void WatchThreads::updateStatus()
 {
   std::string statusMsg, statusLabel = "Last successful run: ";
   switch(l.getLatestMsg().interpretMsg())
@@ -88,7 +88,7 @@ void LogWatch::updateStatus()
   icon.getInfoWin().updateStatus(statusLabel, statusMsg);
 }
 
-void LogWatch::updateLogView()
+void WatchThreads::updateLogView()
 {
   Logfile::const_iterator m = l.end();
   m--;
@@ -102,7 +102,7 @@ void LogWatch::updateLogView()
 
 // Below all functions running in worker thread
 
-void LogWatch::notifyMainLoop()
+void WatchThreads::notifyMainLoop()
 {
   GSource *source;
   last_mod = getFileModTime(logfilePath);
@@ -112,13 +112,13 @@ void LogWatch::notifyMainLoop()
   g_source_unref(source);
 }
 
-void LogWatch::join()
+void WatchThreads::join()
 {
   procThread.join();
   fileThread.join();
 }
 
-void LogWatch::watch_proc()
+void WatchThreads::watch_proc()
 {
   // Busy wait as inotify doesn't work on procfs and
   // wait only works for child procs.
@@ -129,7 +129,7 @@ void LogWatch::watch_proc()
   notifyMainLoop();
 }
 
-void LogWatch::watch_logfile()
+void WatchThreads::watch_logfile()
 {
   int length, i = 0;
   int fd;

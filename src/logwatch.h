@@ -6,7 +6,7 @@
 #include <thread>
 #include <gtk/gtk.h>
 
-class LogWatch
+class WatchThreads
 {
     std::string logfilePath;
     std::string btrbkPath = "/usr/sbin/btrbk";
@@ -27,7 +27,7 @@ class LogWatch
     void watch_proc();
 
 public:
-    LogWatch(std::string, GMainContext*);
-    void runWatchThread();
+    WatchThreads(std::string, GMainContext*);
+    void runWatchThreads();
     void join();
 };

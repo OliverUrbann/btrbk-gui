@@ -22,8 +22,8 @@ int main (int argc, char **argv)
     logfilePath = argv[1];
 
   GMainContext *context = g_main_context_default();
-  LogWatch lw(logfilePath, context);
-  lw.runWatchThread();
+  WatchThreads lw(logfilePath, context);
+  lw.runWatchThreads();
   app->hold();
   int ret = app->run();
   lw.join();
