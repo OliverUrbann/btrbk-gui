@@ -12,24 +12,50 @@ StateIcon::StateIcon(std::string logfilePath)
                                  APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
   indicator_menu = gtk_menu_new ();
 
-  newMenuItem("Info", G_CALLBACK (info_clicked));
-  newMenuItem("Quit", G_CALLBACK (quit_clicked));
+  newMenuItem("Info", NULL, G_CALLBACK (info_clicked));
+  GtkWidget *actions_menu = newMenuItem("Actions", NULL);
+  run_menu = newMenuItem("Run", actions_menu, G_CALLBACK (info_clicked));
+  resume_menu = newMenuItem("Resume", actions_menu, G_CALLBACK (info_clicked));
+  stop_menu = newMenuItem("Stop", actions_menu, G_CALLBACK (info_clicked));
+  newMenuItem("Quit", NULL, G_CALLBACK (quit_clicked));
 
   app_indicator_set_status (indicator, APP_INDICATOR_STATUS_ACTIVE);
   app_indicator_set_icon_theme_path(indicator, iconPath.c_str());
   app_indicator_set_icon (indicator, "backup");
   app_indicator_set_menu (indicator, GTK_MENU (indicator_menu));
-
 }
 
-void StateIcon::newMenuItem(std::string title, GCallback c_handler)
+// Adding new item to the menu. parent should NULL if the new item is not a submenu.
+// c_handler is NULL in case this is the parent for new submenus. Returns
+// the new menu to use it later as parent or the new item if it is not a submenu.
+GtkWidget * StateIcon::newMenuItem(std::string title, GtkWidget *parent, GCallback c_handler)
 {
-  GtkWidget *item;
+  GtkWidget *item, *submenu = NULL, *ret = NULL;
   item = gtk_menu_item_new_with_label (title.c_str());
-  g_signal_connect (item, "activate", G_CALLBACK (c_handler), this);
-  gtk_menu_shell_append (GTK_MENU_SHELL (indicator_menu), item);
+
+  // In case there is nothing to do when this item is clicked, we assume this is a submenu
+  if (c_handler != NULL)
+  {
+    g_signal_connect (item, "activate", G_CALLBACK (c_handler), this);
+    ret = item;
+  }
+  else
+  {
+    submenu = gtk_menu_new();
+    ret = submenu;
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
+  }
+
+  if (parent == NULL)
+  {
+    parent = indicator_menu;
+  }
+
+  gtk_menu_shell_append (GTK_MENU_SHELL (parent), item);
   gtk_widget_show(item);
   app_indicator_set_secondary_activate_target(indicator, item);
+
+  return ret;
 }
 
 void StateIcon::info_clicked(GtkWidget *widget, gpointer data)
@@ -50,17 +76,28 @@ void StateIcon::updateIcon(IconType t)
   {
   case IconType::ok:
     app_indicator_set_icon (indicator, "backup-ok");
+    updateMenuSensitivity(false);
     break;
   case IconType::err:
     app_indicator_set_icon (indicator, "backup-err");
+    updateMenuSensitivity(false);
     break;
   case IconType::running:
     app_indicator_set_icon (indicator, "backup-running");
+    updateMenuSensitivity(true);
     break;
-  default:
+  default:  
     app_indicator_set_icon (indicator, "backup");
+    updateMenuSensitivity(true);
     break;
   }
+}
+
+void StateIcon::updateMenuSensitivity(bool running)
+{
+  gtk_widget_set_sensitive (run_menu, !running);
+  gtk_widget_set_sensitive (stop_menu, running);
+  gtk_widget_set_sensitive (resume_menu, running);
 }
 
 InfoWin& StateIcon::getInfoWin()

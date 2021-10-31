@@ -11,11 +11,12 @@ class StateIcon
   std::string logfilePath = "/var/log/btrbk.log";
   std::string iconPath = getInstallDir() + "/icons/";
   AppIndicator *indicator;
-  GtkWidget *indicator_menu;
+  GtkWidget *indicator_menu, *run_menu, *resume_menu, *stop_menu;
   InfoWin win;
   static void info_clicked(GtkWidget *widget, gpointer data);
   static void quit_clicked(GtkWidget *widget, gpointer data);
-  void newMenuItem(std::string title, GCallback c_handler);
+  GtkWidget * newMenuItem(std::string title, GtkWidget *parent, GCallback c_handler = NULL);
+  void updateMenuSensitivity(bool running);
 public:
   StateIcon(std::string logfilePath = "");
   enum IconType {ok, err, running, def};
