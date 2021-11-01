@@ -46,3 +46,7 @@ Note that the executable will not work without installation as it searches for i
 ## Usage
 
 A log file written by btrbk is required so that this tool can read it. I assume the log file is `/var/log/btrbk.log`. Probably your btrbk must be configured to write this log here. You may give another path as a parameter like `btrbk-gui /var/log/other-btrbk.log`.
+
+### Actions Menu
+
+This menu allows you to run the corresponding btrbk actions. By default btrbk-gui assume `pkexec` and `btrbk` are in your `$PATH` and that you are running gnome as `gnome-terminal` is utilized. If any of these requirements are not met on your system, you may want to edit `src/actions.cpp` accordingly. 

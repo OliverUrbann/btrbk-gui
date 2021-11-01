@@ -1,4 +1,5 @@
 #include "stateicon.h"
+#include "actions.h"
 
 StateIcon::StateIcon(std::string logfilePath)
 {
@@ -14,7 +15,7 @@ StateIcon::StateIcon(std::string logfilePath)
 
   newMenuItem("Info", NULL, G_CALLBACK (info_clicked));
   GtkWidget *actions_menu = newMenuItem("Actions", NULL);
-  run_menu = newMenuItem("Run", actions_menu, G_CALLBACK (info_clicked));
+  run_menu = newMenuItem("Run", actions_menu, G_CALLBACK (run_clicked));
   resume_menu = newMenuItem("Resume", actions_menu, G_CALLBACK (info_clicked));
   stop_menu = newMenuItem("Stop", actions_menu, G_CALLBACK (info_clicked));
   newMenuItem("Quit", NULL, G_CALLBACK (quit_clicked));
@@ -68,6 +69,11 @@ void StateIcon::info_clicked(GtkWidget *widget, gpointer data)
 void StateIcon::quit_clicked(GtkWidget *widget, gpointer data)
 {
   exit(0);
+}
+
+void StateIcon::run_clicked(GtkWidget *widget, gpointer data)
+{
+  Actions::run();
 }
 
 void StateIcon::updateIcon(IconType t)

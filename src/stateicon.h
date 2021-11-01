@@ -15,6 +15,7 @@ class StateIcon
   InfoWin win;
   static void info_clicked(GtkWidget *widget, gpointer data);
   static void quit_clicked(GtkWidget *widget, gpointer data);
+  static void run_clicked(GtkWidget *widget, gpointer data);
   GtkWidget * newMenuItem(std::string title, GtkWidget *parent, GCallback c_handler = NULL);
   void updateMenuSensitivity(bool running);
 public:
