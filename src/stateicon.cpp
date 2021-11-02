@@ -16,8 +16,8 @@ StateIcon::StateIcon(std::string logfilePath)
   newMenuItem("Info", NULL, G_CALLBACK (info_clicked));
   GtkWidget *actions_menu = newMenuItem("Actions", NULL);
   run_menu = newMenuItem("Run", actions_menu, G_CALLBACK (run_clicked));
-  resume_menu = newMenuItem("Resume", actions_menu, G_CALLBACK (info_clicked));
-  stop_menu = newMenuItem("Stop", actions_menu, G_CALLBACK (info_clicked));
+  resume_menu = newMenuItem("Resume", actions_menu, G_CALLBACK (resume_clicked));
+  stop_menu = newMenuItem("Stop", actions_menu, G_CALLBACK (stop_clicked));
   newMenuItem("Quit", NULL, G_CALLBACK (quit_clicked));
 
   app_indicator_set_status (indicator, APP_INDICATOR_STATUS_ACTIVE);
@@ -71,6 +71,16 @@ void StateIcon::quit_clicked(GtkWidget *widget, gpointer data)
   exit(0);
 }
 
+void StateIcon::stop_clicked(GtkWidget *widget, gpointer data)
+{
+  Actions::stop();
+}
+
+void StateIcon::resume_clicked(GtkWidget *widget, gpointer data)
+{
+  Actions::resume();
+}
+
 void StateIcon::run_clicked(GtkWidget *widget, gpointer data)
 {
   Actions::run();
@@ -103,7 +113,7 @@ void StateIcon::updateMenuSensitivity(bool running)
 {
   gtk_widget_set_sensitive (run_menu, !running);
   gtk_widget_set_sensitive (stop_menu, running);
-  gtk_widget_set_sensitive (resume_menu, running);
+  gtk_widget_set_sensitive (resume_menu, !running);
 }
 
 InfoWin& StateIcon::getInfoWin()

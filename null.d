@@ -1,3 +1,3 @@
-stateicon.o: /dev/null /usr/include/stdc-predef.h
+watchthreads.o: /dev/null /usr/include/stdc-predef.h
 
 /usr/include/stdc-predef.h:

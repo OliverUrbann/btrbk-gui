@@ -32,4 +32,9 @@ install-desktop:
 	mkdir -p $(DESTDIR)$(datadir)/applications; \
 	$(INSTALL_DATA) btrbkgui.desktop $(DESTDIR)$(datadir)/applications
 
-install-data-local: install-icons install-glade install-desktop
+install-scripts:
+	mkdir -p $(DESTDIR)$(pkgdatadir)/; \
+	$(INSTALL_DATA) execute_btrbk.sh $(DESTDIR)$(pkgdatadir)/execute_btrbk.sh; \
+	chmod +x $(DESTDIR)$(pkgdatadir)/execute_btrbk.sh
+
+install-data-local: install-icons install-glade install-desktop install-scripts
