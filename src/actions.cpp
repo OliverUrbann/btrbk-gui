@@ -2,11 +2,11 @@
 #include "tools.h"
 #include <sstream>
 
-void Actions::execute(std::string cmd)
+int Actions::execute(std::string cmd)
 {
     std::stringstream full_cmd;
     full_cmd << getInstallDir() << "/execute_btrbk.sh " << cmd;
-    system(full_cmd.str().c_str());
+    return system(full_cmd.str().c_str());
 }
 
 void Actions::run()
@@ -17,6 +17,11 @@ void Actions::run()
 void Actions::resume()
 {
     execute("resume");
+}
+
+void Actions::clean()
+{
+    execute("clean");
 }
 
 void Actions::stop()

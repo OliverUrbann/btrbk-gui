@@ -17,6 +17,7 @@ StateIcon::StateIcon(std::string logfilePath)
   GtkWidget *actions_menu = newMenuItem("Actions", NULL);
   run_menu = newMenuItem("Run", actions_menu, G_CALLBACK (run_clicked));
   resume_menu = newMenuItem("Resume", actions_menu, G_CALLBACK (resume_clicked));
+  clean_menu = newMenuItem("Clean", actions_menu, G_CALLBACK (clean_clicked));
   stop_menu = newMenuItem("Stop", actions_menu, G_CALLBACK (stop_clicked));
   newMenuItem("Quit", NULL, G_CALLBACK (quit_clicked));
 
@@ -74,6 +75,11 @@ void StateIcon::quit_clicked(GtkWidget *widget, gpointer data)
 void StateIcon::stop_clicked(GtkWidget *widget, gpointer data)
 {
   Actions::stop();
+}
+
+void StateIcon::clean_clicked(GtkWidget *widget, gpointer data)
+{
+  Actions::clean();
 }
 
 void StateIcon::resume_clicked(GtkWidget *widget, gpointer data)
