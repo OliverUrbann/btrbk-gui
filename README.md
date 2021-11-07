@@ -46,3 +46,69 @@ Note that the executable will not work without installation as it searches for i
 ## Usage
 
 A log file written by btrbk is required so that this tool can read it. I assume the log file is `/var/log/btrbk.log`. Probably your btrbk must be configured to write this log here. You may give another path as a parameter like `btrbk-gui /var/log/other-btrbk.log`.
+
+### Actions Menu
+
+This menu allows you to run the corresponding btrbk actions. By default btrbk-gui assume `pkexec` and `btrbk` are in your `$PATH` and that you have install `gnome-terminal`. Actually, btrbkgui executes the script `/usr/local/share/btrbkgui/execute_btrbk.sh` (note the path depends on your installation dir). The default script is:
+
+```
+#!/bin/sh
+
+case "$1" in
+    run)
+        gnome-terminal -- sh -c 'cd /tmp ; pkexec btrbk run; bash'       
+    ;;
+    resume)
+        gnome-terminal -- sh -c 'cd /tmp ; pkexec btrbk resume; bash'
+    ;;
+    clean)
+        gnome-terminal -- sh -c 'cd /tmp ; pkexec btrbk clean; bash'
+    ;;
+    kill)
+        gnome-terminal -- sh -c 'cd /tmp ; pkexec kill $2; bash'
+    ;;
+esac
+```
+
+So, you may want to edit this file to match your system. Besides different executables (e.g. for the terminal) you may have, for example, an encrypted file system as your backup device and this must be (un)mounted before and after your backup. Your script could be changed accordingly:
+
+```
+#!/bin/sh
+
+export PID=$2
+
+case "$1" in
+    run)
+        gnome-terminal -- sh -c ' \
+            cd /tmp; \
+            pkexec sh -c " \
+            	sh mount.sh; \
+                btrbk run; \
+                sh unmount.sh"; \
+            bash'      
+    ;;
+    resume)
+        gnome-terminal -- sh -c ' \
+            cd /tmp; \
+            pkexec sh -c " \
+            	sh mount.sh; \
+                btrbk resume; \
+                sh unmount.sh"; \
+            bash'
+    ;;
+    clean)
+        gnome-terminal -- sh -c ' \
+            cd /tmp; \
+            pkexec sh -c " \
+                sh mount.sh; \
+                btrbk clean; \
+                sh unmount.sh"; \
+            bash'
+    ;;
+
+    kill)
+        gnome-terminal -- sh -c 'cd /tmp ; pkexec kill $PID ; bash'
+    ;;
+esac
+
+```

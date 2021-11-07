@@ -10,8 +10,6 @@ class WatchThreads
 {
     std::string logfilePath;
     std::string btrbkPath = "/usr/sbin/btrbk";
-    void notifyMainLoop();
-    void watch_logfile();
     StateIcon icon;
     Logfile l;
     GMainContext *context;
@@ -25,6 +23,8 @@ class WatchThreads
     void updateStatus();
     void checkProcState();
     void watch_proc();
+    void notifyMainLoop();
+    void watch_logfile();
 
 public:
     WatchThreads(std::string, GMainContext*);
